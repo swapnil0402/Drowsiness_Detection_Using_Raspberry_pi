@@ -9,14 +9,14 @@ from threading import Thread
 
 # GPIO setup
 GPIO.setmode(GPIO.BCM)
-BUZZER_PIN = 17
-GPIO.setup(BUZZER_PIN, GPIO.OUT)
+LED_PIN = 17
+GPIO.setup(LED_PIN, GPIO.OUT)
 
-def buzzer_pattern(pattern):
+def led_pattern(pattern):
     for duration in pattern:
-        GPIO.output(BUZZER_PIN, GPIO.HIGH)
+        GPIO.output(LED_PIN, GPIO.HIGH)
         time.sleep(duration[0])
-        GPIO.output(BUZZER_PIN, GPIO.LOW)
+        GPIO.output(LED_PIN, GPIO.LOW)
         time.sleep(duration[1])
 
 def alarm(msg):
@@ -25,52 +25,21 @@ def alarm(msg):
     global saying
 
     if msg == 'drowsy':
-        pattern = [(0.5, 0.5)]  # Longer beep for drowsiness
+        pattern = [(0.5, 0.5)]  # Longer blink for drowsiness
     elif msg == 'yawn':
-        pattern = [(0.1, 0.1)] * 5  # Short beeps for yawning
+        pattern = [(0.1, 0.1)] * 5  # Rapid blinks for yawning
     else:
         pattern = [(0.1, 0.1)]  # Default pattern
 
     while alarm_status and msg == 'drowsy':
-        buzzer_pattern(pattern)
+        led_pattern(pattern)
         
     if alarm_status2 and msg == 'yawn':
         saying = True
-        buzzer_pattern(pattern)
+        led_pattern(pattern)
         saying = False
 
-def eye_aspect_ratio(eye):
-    A = dist.euclidean(eye[1], eye[5])
-    B = dist.euclidean(eye[2], eye[4])
-    C = dist.euclidean(eye[0], eye[3])
-    ear = (A + B) / (2.0 * C)
-    return ear
-
-def final_ear(shape):
-    (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
-    (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
-
-    leftEye = shape[lStart:lEnd]
-    rightEye = shape[rStart:rEnd]
-
-    leftEAR = eye_aspect_ratio(leftEye)
-    rightEAR = eye_aspect_ratio(rightEye)
-
-    ear = (leftEAR + rightEAR) / 2.0
-    return ear
-
-def lip_distance(shape):
-    top_lip = shape[50:53]
-    top_lip = np.concatenate((top_lip, shape[61:64]))
-
-    low_lip = shape[56:59]
-    low_lip = np.concatenate((low_lip, shape[65:68]))
-
-    top_mean = np.mean(top_lip, axis=0)
-    low_mean = np.mean(low_lip, axis=0)
-
-    distance = abs(top_mean[1] - low_mean[1])
-    return distance
+# (Rest of your code remains unchanged)
 
 # Initialize Dlib's face detector and the facial landmark predictor
 detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")

@@ -10,11 +10,11 @@ import imutils
 import dlib
 import cv2
 
-def buzzer_pattern(pattern):
+def led_pattern(pattern):
     for duration in pattern:
-        GPIO.output(BUZZER_PIN, GPIO.HIGH)
+        GPIO.output(LED_PIN, GPIO.HIGH)
         time.sleep(duration[0])
-        GPIO.output(BUZZER_PIN, GPIO.LOW)
+        GPIO.output(LED_PIN, GPIO.LOW)
         time.sleep(duration[1])
 
 def alarm(msg):
@@ -23,18 +23,18 @@ def alarm(msg):
     global saying
 
     if msg == 'drowsy':
-        pattern = [(0.5, 0.5)]  # Longer beep for drowsiness
+        pattern = [(0.5, 0.5)]  # Longer blink for drowsiness
     elif msg == 'yawn':
-        pattern = [(0.1, 0.1)] * 5  # Short beeps for yawning
+        pattern = [(0.1, 0.1)] * 5  # Short blinks for yawning
     else:
         pattern = [(0.1, 0.1)]  # Default pattern
 
     while alarm_status and msg == 'drowsy':
-        buzzer_pattern(pattern)
+        led_pattern(pattern)
         
     if alarm_status2 and msg == 'yawn':
         saying = True
-        buzzer_pattern(pattern)
+        led_pattern(pattern)
         saying = False
 
 def eye_aspect_ratio(eye):
@@ -90,8 +90,8 @@ time.sleep(1.0)
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
-BUZZER_PIN = 17
-GPIO.setup(BUZZER_PIN, GPIO.OUT)
+LED_PIN = 17
+GPIO.setup(LED_PIN, GPIO.OUT)
 
 # Set video resolution
 vs.stream.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
