@@ -1,0 +1,21 @@
+from diagrams import Diagram, Node
+from diagrams.custom import Custom
+
+with Diagram("E-commerce System Architecture", show=False):
+    ui = Custom("User Interface - React", "./icons/react.png")
+    backend = Custom("API & Logic - FastAPI", "./icons/fastapi.png")
+    chatbot = Custom("LangChain Chatbot", "./icons/langchain.png")
+    recommendation = Custom("Recommendation Engine", "./icons/recommendation.png")
+    ar = Custom("AR Service - ARKit", "./icons/arkit.png")
+    image_proc = Custom("Image Processing - OpenCV/Dlib", "./icons/opencv.png")
+    database = Custom("Database - MongoDB", "./icons/mongodb.png")
+    security = Custom("Security Layer", "./icons/security.png")
+
+    ui >> backend
+    backend >> chatbot
+    chatbot >> recommendation
+    backend >> ar
+    backend >> image_proc
+    recommendation >> database
+    image_proc >> recommendation
+    security >> backend
